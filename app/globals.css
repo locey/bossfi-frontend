@@ -24,3 +24,20 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.category-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #222;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.category-btn:hover {
+  background: #FFE4EE;
+}

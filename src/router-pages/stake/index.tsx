@@ -19,7 +19,7 @@ const WalletProvider = dynamic(() => import("./components/WalletProvider"), {
 function StakePage() {
   return (
     <WalletProvider>
-      <div className="bg-[##f2f4f6] py-5">
+      <div className="bg-[##f2f4f6]">
         {/* <div className=" p-6">
           <h1 className="text-2xl font-bold mb-4">
             🦄 RainbowKit 钱包连接 Demo
@@ -31,10 +31,12 @@ function StakePage() {
             <WalletInfo />
           </div>
         </div> */}
+        <div className="w-full flex justify-between items-center bg-white p-4 shadow-md">
+          <h1 className="text-xl font-bold">BoosFi</h1>
+          <ConnectButton />
+        </div>
 
-        {/* <StakingPage /> */}
-
-        <main className="w-[560px] mx-auto py-2">
+        <main className="w-[560px] mx-auto py-2 mt-4">
           <div className="flex flex-col items-center mb-4">
             <h1 className="text-2xl font-bold mb-1">Stake Ether</h1>
             <h4>Stake ETH and receive stETH while staking</h4>

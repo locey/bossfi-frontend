@@ -1,3 +1,5 @@
+import PostDetailPage from "@/components/Post/PostDetailPage";
+
 export default function Post() {
-  return <h1>帖子发布页</h1>;
-} 
+  return <PostDetailPage />;
+}

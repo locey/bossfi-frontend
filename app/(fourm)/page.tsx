@@ -1,5 +1,5 @@
 'use client'
-import CategoryTabs from '../components/CategoryTabs'
+import CategoryTabs from '../../components/CategoryTabs'
 import PostCard from '@/components/Post/PostCard'
 
 const posts = [

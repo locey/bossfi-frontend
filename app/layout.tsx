@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { Nunito, PT_Sans } from 'next/font/google'
 import './globals.css'
-import Navbar from '../components/Navbar'
-import RightSidebar from '../components/RightSidebar'
 
 const nunito = Nunito({
   variable: '--font-nunito',
@@ -27,14 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>
-        <Navbar />
-        <div className="max-w-7xl mx-auto flex gap-8 mt-8">
-          <div className="texture" />
-          <div className="flex-1">{children}</div>
-          <RightSidebar />
-        </div>
-      </body>
+      <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>{children}</body>
     </html>
   )
 }

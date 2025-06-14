@@ -15,6 +15,9 @@ export default function Navbar() {
         <Link href="/posts/create">
           <Button variant="outline">发布</Button>
         </Link>
+        <Link href="/stake">
+          <Button variant="default">去质押</Button>
+        </Link>
         <Link href="/profile">
           <Button variant="ghost">我的</Button>
         </Link>

@@ -6,10 +6,12 @@ import { useAccount, useBalance } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { formatUnits } from "viem";
 import { formatAddress } from "@/utils";
+import { useStake } from "@/hooks/useStake";
 
 function ConnectWallet() {
   const { address, isConnected } = useAccount();
   const { data } = useBalance({ address });
+  const stake = useStake();
 
   const [ethAmount, setEthAmount] = useState("");
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -18,8 +20,12 @@ function ConnectWallet() {
     setEthAmount("2.5"); // Example max amount
   };
 
-  const handleConnectWallet = () => {
-    setIsWalletConnected(true);
+  const handleConnectWallet = async () => {
+    // setIsWalletConnected(true);
+    console.log("Connecting wallet...");
+    const result = await stake(ethAmount);
+    console.log("Stake result:", result);
+    alert("质押成功！请稍后查看您的 stETH 余额。");
   };
 
   const exchangeRate = ethAmount ? `1 ETH = 1 stETH` : "1 ETH = 1 stETH";

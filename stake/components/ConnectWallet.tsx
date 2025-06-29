@@ -1,24 +1,36 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { Wallet, Info, Plus, ArrowRight } from "lucide-react";
-import { useAccount, useBalance } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { formatUnits } from "viem";
-import { formatAddress } from "@/utils";
+import React, { useEffect, useState } from 'react'
+import { Wallet, Info, Plus, ArrowRight } from 'lucide-react'
+import { useAccount, useBalance, useSignMessage } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { formatUnits } from 'viem'
+import { formatAddress } from '@/utils'
 import { useStake } from '@/hooks/useStake'
+import to from '@/utils/await-to'
+import api from '@/apis/auth'
+import { Button } from '@/components/ui/button'
 
 function ConnectWallet() {
-  const { address, isConnected } = useAccount();
-  const { data } = useBalance({ address });
+  const { address, isConnected } = useAccount()
+  const { data } = useBalance({ address })
   const stake = useStake()
+  const [signature, setSignature] = useState('')
+  const { signMessageAsync, isSuccess, isLoading } = useSignMessage()
 
-  const [ethAmount, setEthAmount] = useState("");
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [ethAmount, setEthAmount] = useState('')
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+
+  // useEffect(() => {
+  //   if (address && isConnected) {
+  //     console.log('Wallet connected:', address)
+  //     onLogin(address)
+  //   }
+  // }, [address, isConnected])
 
   const handleMaxClick = () => {
-    setEthAmount("2.5"); // Example max amount
-  };
+    setEthAmount('2.5') // Example max amount
+  }
 
   const handleConnectWallet = async () => {
     // setIsWalletConnected(true);
@@ -28,13 +40,67 @@ function ConnectWallet() {
     alert('质押成功！请稍后查看您的 stETH 余额。')
   }
 
-  const exchangeRate = ethAmount ? `1 ETH = 1 stETH` : "1 ETH = 1 stETH";
-  const youWillReceive = ethAmount ? `${ethAmount} stETH` : "0.0 stETH";
+  const exchangeRate = ethAmount ? `1 ETH = 1 stETH` : '1 ETH = 1 stETH'
+  const youWillReceive = ethAmount ? `${ethAmount} stETH` : '0.0 stETH'
 
-  const formatted = data ? formatUnits(data.value, data.decimals) : "0";
+  const formatted = data ? formatUnits(data.value, data.decimals) : '0'
+
+  const getAuthNonce = async address => {
+    const data = {
+      wallet_address: address,
+    }
+
+    const [error, response] = await to(api.nonce(data))
+
+    if (error) {
+      console.error('Failed to fetch nonce:', error)
+      return
+    }
+    console.log('getAuthNonce response:', response)
+    return response
+  }
+
+  // const handleSign = async () => {
+  //   const result = await getAuthNonce()
+
+  //   try {
+  //     const sig = await signMessageAsync({ message: result?.message || '' })
+  //     setSignature(sig)
+  //     console.log('签名成功:', sig)
+  //     // 你可以将 signature 和 address 发给后端做 nonce 校验 + 登录
+  //   } catch (err) {
+  //     console.error('签名失败:', err)
+  //   }
+  // }
+
+  const onLogin = async () => {
+    const nonce = await getAuthNonce(address)
+    console.log('获取的 nonce:-----', nonce)
+    const sig = await signMessageAsync({ message: nonce?.message || '' })
+    const loginParams = {
+      wallet_address: address as string,
+      message: nonce?.message || '',
+      signature: sig as string,
+    }
+    console.log('登录参数:-----', loginParams)
+    const [error, response] = await to(api.login(loginParams))
+    if (error) {
+      console.error('登录失败:', error)
+      return
+    }
+    console.log('登录成功:-----', response)
+    localStorage.setItem('Token', response.token)
+    localStorage.setItem('UserInfo', JSON.stringify(response.user))
+  }
 
   return (
     <div className="max-w-xl">
+      {isConnected && (
+        <div className="mt-4">
+          <Button onClick={() => onLogin()}>登录</Button>
+        </div>
+      )}
+
       {isConnected && (
         <div className="w-full bg-[#27272e] -mb-6 rounded-2xl text-white p-6 pb-12">
           <div className="flex justify-between items-center border-b border-gray-700 pb-4">
@@ -45,7 +111,7 @@ function ConnectWallet() {
               </strong>
             </div>
             <div className="border border-gray-200 rounded-full px-2 py-1 flex items-center gap-2">
-              <span>{formatAddress(address || "")}</span>
+              <span>{formatAddress(address || '')}</span>
               <Wallet size={18} className="text-gray-400" />
             </div>
           </div>
@@ -77,7 +143,7 @@ function ConnectWallet() {
               <input
                 type="number"
                 value={ethAmount}
-                onChange={(e) => setEthAmount(e.target.value)}
+                onChange={e => setEthAmount(e.target.value)}
                 placeholder="0.0"
                 className="flex-1 bg-transparent text-right text-lg font-medium text-gray-900 outline-none"
               />
@@ -108,7 +174,7 @@ function ConnectWallet() {
                     >
                       连接钱包
                     </button>
-                  );
+                  )
                 }}
               </ConnectButton.Custom>
             )}
@@ -122,9 +188,7 @@ function ConnectWallet() {
             <h3 className="text-lg font-bold text-gray-900">Total 6.4% APR</h3>
             <span className="text-gray-600">+ Mellow points</span>
           </div>
-          <p className="text-sm text-gray-600">
-            New way to support Lido decentralization.
-          </p>
+          <p className="text-sm text-gray-600">New way to support Lido decentralization.</p>
 
           {/* Protocol Icons */}
           <div className="flex items-center gap-3 mt-4">
@@ -153,16 +217,13 @@ function ConnectWallet() {
               <div className="w-6 h-6 bg-gradient-to-br from-pink-500 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">M</span>
               </div>
-              <span className="text-sm font-semibold text-gray-700">
-                Mellow points
-              </span>
+              <span className="text-sm font-semibold text-gray-700">Mellow points</span>
             </div>
           </div>
 
           <div className="text-xs text-gray-500 mt-3 leading-relaxed">
-            Not financial advice. Info and APR are illustrative, actual rewards
-            may vary. Vaults use carries risk. By proceeding, you'll be
-            redirected to a third-party site.
+            Not financial advice. Info and APR are illustrative, actual rewards may vary. Vaults use carries risk. By
+            proceeding, you'll be redirected to a third-party site.
           </div>
 
           <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 mt-4">
@@ -175,16 +236,12 @@ function ConnectWallet() {
         <div className="space-y-3 pt-2">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">You will receive</span>
-            <span className="text-sm font-semibold text-gray-900">
-              {youWillReceive}
-            </span>
+            <span className="text-sm font-semibold text-gray-900">{youWillReceive}</span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">Exchange rate</span>
-            <span className="text-sm font-semibold text-gray-900">
-              {exchangeRate}
-            </span>
+            <span className="text-sm font-semibold text-gray-900">{exchangeRate}</span>
           </div>
 
           <div className="flex justify-between items-center">
@@ -202,7 +259,7 @@ function ConnectWallet() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default ConnectWallet;
+export default ConnectWallet

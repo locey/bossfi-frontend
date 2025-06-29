@@ -1,22 +1,68 @@
-"use client";
+'use client'
 
-import "@rainbow-me/rainbowkit/styles.css";
+import '@rainbow-me/rainbowkit/styles.css'
 
-import ConnectWallet from "./components/ConnectWallet";
-import FAQ from "./components/FAQ";
-import Statistics from "./components/Statistics";
+import ConnectWallet from './components/ConnectWallet'
+import FAQ from './components/FAQ'
+import Statistics from './components/Statistics'
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import WalletInfo from "./components/WalletInfo";
-import dynamic from "next/dynamic";
-import "@rainbow-me/rainbowkit/styles.css";
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import WalletInfo from './components/WalletInfo'
+import dynamic from 'next/dynamic'
+import '@rainbow-me/rainbowkit/styles.css'
+import { useEffect } from 'react'
+import to from '@/utils/await-to'
+import api from '@/apis/auth'
 // import StakingPage from "./Test";
 
-const WalletProvider = dynamic(() => import("./components/WalletProvider"), {
+const WalletProvider = dynamic(() => import('./components/WalletProvider'), {
   ssr: false,
-});
+})
 
 function StakePage() {
+  const getAuthNonce = async () => {
+    const data = {
+      wallet_address: '0x876a229E5350fe1Fa24309d029Efe1a33a63D914',
+    }
+
+    const [error, response] = await to(api.nonce(data))
+
+    if (error) {
+      console.error('Failed to fetch nonce:', error)
+      return
+    }
+
+    login({
+      wallet_address: data.wallet_address,
+      message: response.message,
+      signature: response.nonce,
+    })
+    // const response = await fetch('http://117.72.201.234/api/v1/auth/nonce', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    // if (!response.ok) {
+    //   throw new Error('Failed to fetch nonce')
+    // }
+
+    console.log('getAuthNonce response:', response)
+    //   const data = await response.json();
+    //   return data.nonce;
+  }
+
+  const login = async (params: any) => {
+    const [error, response] = await to(api.login(params))
+    if (error) {
+      console.error('Login failed:', error)
+      return
+    }
+    console.log('Login response:', response)
+    // 处理登录成功后的逻辑，比如保存 token 等
+  }
+
   return (
     <WalletProvider>
       <div className="bg-[##f2f4f6]">
@@ -47,15 +93,13 @@ function StakePage() {
             <FAQ />
             {/* Footer */}
             <div className="text-center">
-              <p className="text-xs text-gray-500">
-                Powered by Lido Protocol • Secured by Ethereum
-              </p>
+              <p className="text-xs text-gray-500">Powered by Lido Protocol • Secured by Ethereum</p>
             </div>
           </div>
         </main>
       </div>
     </WalletProvider>
-  );
+  )
 }
 
-export default StakePage;
+export default StakePage

@@ -21,12 +21,13 @@ function ConnectWallet() {
   const [ethAmount, setEthAmount] = useState('')
   const [isWalletConnected, setIsWalletConnected] = useState(false)
 
-  // useEffect(() => {
-  //   if (address && isConnected) {
-  //     console.log('Wallet connected:', address)
-  //     onLogin(address)
-  //   }
-  // }, [address, isConnected])
+  useEffect(() => {
+    const token = localStorage.getItem('Token')
+    if (!token && address && isConnected) {
+      console.log('Wallet connected:', address)
+      onLogin(address)
+    }
+  }, [address, isConnected])
 
   const handleMaxClick = () => {
     setEthAmount('2.5') // Example max amount
@@ -45,7 +46,7 @@ function ConnectWallet() {
 
   const formatted = data ? formatUnits(data.value, data.decimals) : '0'
 
-  const getAuthNonce = async address => {
+  const getAuthNonce = async (address: string) => {
     const data = {
       wallet_address: address,
     }
@@ -60,20 +61,7 @@ function ConnectWallet() {
     return response
   }
 
-  // const handleSign = async () => {
-  //   const result = await getAuthNonce()
-
-  //   try {
-  //     const sig = await signMessageAsync({ message: result?.message || '' })
-  //     setSignature(sig)
-  //     console.log('签名成功:', sig)
-  //     // 你可以将 signature 和 address 发给后端做 nonce 校验 + 登录
-  //   } catch (err) {
-  //     console.error('签名失败:', err)
-  //   }
-  // }
-
-  const onLogin = async () => {
+  const onLogin = async (address: string) => {
     const nonce = await getAuthNonce(address)
     console.log('获取的 nonce:-----', nonce)
     const sig = await signMessageAsync({ message: nonce?.message || '' })

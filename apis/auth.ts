@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 
 export interface INonceResponse {
   message: string;
@@ -40,7 +40,7 @@ const api: IAuthAPI = {
   nonce: (data) => post('/api/v1/auth/nonce', data),
   login: (data) => post('/api/v1/auth/login', data),
   logout: () => post('/api/v1/auth/logout'),
-  profile: () => post('/api/v1/auth/profile'),
+  profile: () => get('/api/v1/auth/profile'),
 };
 
 export default api;

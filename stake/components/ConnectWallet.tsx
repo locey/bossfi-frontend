@@ -10,24 +10,15 @@ import { useStake } from '@/hooks/useStake'
 import to from '@/utils/await-to'
 import api from '@/apis/auth'
 import { Button } from '@/components/ui/button'
+import { usePassport, WalletLoginButton } from '@/components/Passport'
 
 function ConnectWallet() {
-  const { address, isConnected } = useAccount()
+  const { isLogged } = usePassport()
+
+  const { address } = useAccount()
   const { data } = useBalance({ address })
   const stake = useStake()
-  const [signature, setSignature] = useState('')
-  const { signMessageAsync, isSuccess, isLoading } = useSignMessage()
-
   const [ethAmount, setEthAmount] = useState('')
-  const [isWalletConnected, setIsWalletConnected] = useState(false)
-
-  useEffect(() => {
-    const token = localStorage.getItem('Token')
-    if (!token && address && isConnected) {
-      console.log('Wallet connected:', address)
-      onLogin(address)
-    }
-  }, [address, isConnected])
 
   const handleMaxClick = () => {
     setEthAmount('2.5') // Example max amount
@@ -38,7 +29,6 @@ function ConnectWallet() {
     console.log('Connecting wallet...')
     const result = await stake(ethAmount)
     console.log('Stake result:', result)
-    alert('质押成功！请稍后查看您的 stETH 余额。')
   }
 
   const exchangeRate = ethAmount ? `1 ETH = 1 stETH` : '1 ETH = 1 stETH'
@@ -46,50 +36,9 @@ function ConnectWallet() {
 
   const formatted = data ? formatUnits(data.value, data.decimals) : '0'
 
-  const getAuthNonce = async (address: string) => {
-    const data = {
-      wallet_address: address,
-    }
-
-    const [error, response] = await to(api.nonce(data))
-
-    if (error) {
-      console.error('Failed to fetch nonce:', error)
-      return
-    }
-    console.log('getAuthNonce response:', response)
-    return response
-  }
-
-  const onLogin = async (address: string) => {
-    const nonce = await getAuthNonce(address)
-    console.log('获取的 nonce:-----', nonce)
-    const sig = await signMessageAsync({ message: nonce?.message || '' })
-    const loginParams = {
-      wallet_address: address as string,
-      message: nonce?.message || '',
-      signature: sig as string,
-    }
-    console.log('登录参数:-----', loginParams)
-    const [error, response] = await to(api.login(loginParams))
-    if (error) {
-      console.error('登录失败:', error)
-      return
-    }
-    console.log('登录成功:-----', response)
-    localStorage.setItem('Token', response.token)
-    localStorage.setItem('UserInfo', JSON.stringify(response.user))
-  }
-
   return (
     <div className="max-w-xl">
-      {isConnected && (
-        <div className="mt-4">
-          <Button onClick={() => onLogin()}>登录</Button>
-        </div>
-      )}
-
-      {isConnected && (
+      {isLogged && (
         <div className="w-full bg-[#27272e] -mb-6 rounded-2xl text-white p-6 pb-12">
           <div className="flex justify-between items-center border-b border-gray-700 pb-4">
             <div className="">
@@ -145,26 +94,15 @@ function ConnectWallet() {
           </div>
 
           <div className="w-full flex items-center justify-between">
-            {isConnected ? (
+            {isLogged ? (
               <button
                 onClick={handleConnectWallet}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                Stake
+                质押
               </button>
             ) : (
-              <ConnectButton.Custom>
-                {({ openConnectModal }) => {
-                  return (
-                    <button
-                      onClick={openConnectModal}
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-                    >
-                      连接钱包
-                    </button>
-                  )
-                }}
-              </ConnectButton.Custom>
+              <WalletLoginButton className="w-full py-4" />
             )}
           </div>
           {/* Connect Wallet Button */}

@@ -6,7 +6,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <>
       <Navbar />
       <div className="max-w-7xl mx-auto flex gap-8 mt-8">
-        <div className="texture" />
         <div className="flex-1">{children}</div>
         <RightSidebar />
       </div>

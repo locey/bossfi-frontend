@@ -1,7 +1,8 @@
-'use server'
+'use client'
 
 import { apiClient } from '@/api'
 import dynamic from 'next/dynamic'
+import { useEffect } from 'react'
 
 const Profile = dynamic(() => import('./profile'), {
   ssr: true,
@@ -78,15 +79,9 @@ const mockComments = [
     content: '另一个参与讨论的评论...',
   },
 ]
-export default async function Page() {
-  console.log('Page start')
-  try {
-    const list = await apiClient.articlesGet(1, 10)
-    console.log(list.data)
-  } catch (error) {
-    console.error(error)
-  }
-
-  console.log('Page end')
+export default function Page() {
+  useEffect(() => {
+    apiClient.authProfileGet()
+  }, [])
   return <Profile user={mockUser} posts={mockPosts} comments={mockComments} />
 }

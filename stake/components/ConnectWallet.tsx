@@ -1,35 +1,44 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { Wallet, Info, Plus, ArrowRight } from "lucide-react";
-import { useAccount, useBalance } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { formatUnits } from "viem";
-import { formatAddress } from "@/utils";
+import React, { useEffect, useState } from 'react'
+import { Wallet, Info, Plus, ArrowRight } from 'lucide-react'
+import { useAccount, useBalance, useSignMessage } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { formatUnits } from 'viem'
+import { formatAddress } from '@/utils'
+import { useStake } from '@/hooks/useStake'
+import to from '@/utils/await-to'
+import api from '@/apis/auth'
+import { Button } from '@/components/ui/button'
+import { usePassport, WalletLoginButton } from '@/components/Passport'
 
 function ConnectWallet() {
-  const { address, isConnected } = useAccount();
-  const { data } = useBalance({ address });
+  const { isLogged } = usePassport()
 
-  const [ethAmount, setEthAmount] = useState("");
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const { address } = useAccount()
+  const { data } = useBalance({ address })
+  const stake = useStake()
+  const [ethAmount, setEthAmount] = useState('')
 
   const handleMaxClick = () => {
-    setEthAmount("2.5"); // Example max amount
-  };
+    setEthAmount('2.5') // Example max amount
+  }
 
-  const handleConnectWallet = () => {
-    setIsWalletConnected(true);
-  };
+  const handleConnectWallet = async () => {
+    // setIsWalletConnected(true);
+    console.log('Connecting wallet...')
+    const result = await stake(ethAmount)
+    console.log('Stake result:', result)
+  }
 
-  const exchangeRate = ethAmount ? `1 ETH = 1 stETH` : "1 ETH = 1 stETH";
-  const youWillReceive = ethAmount ? `${ethAmount} stETH` : "0.0 stETH";
+  const exchangeRate = ethAmount ? `1 ETH = 1 stETH` : '1 ETH = 1 stETH'
+  const youWillReceive = ethAmount ? `${ethAmount} stETH` : '0.0 stETH'
 
-  const formatted = data ? formatUnits(data.value, data.decimals) : "0";
+  const formatted = data ? formatUnits(data.value, data.decimals) : '0'
 
   return (
     <div className="max-w-xl">
-      {isConnected && (
+      {isLogged && (
         <div className="w-full bg-[#27272e] -mb-6 rounded-2xl text-white p-6 pb-12">
           <div className="flex justify-between items-center border-b border-gray-700 pb-4">
             <div className="">
@@ -39,7 +48,7 @@ function ConnectWallet() {
               </strong>
             </div>
             <div className="border border-gray-200 rounded-full px-2 py-1 flex items-center gap-2">
-              <span>{formatAddress(address || "")}</span>
+              <span>{formatAddress(address || '')}</span>
               <Wallet size={18} className="text-gray-400" />
             </div>
           </div>
@@ -71,7 +80,7 @@ function ConnectWallet() {
               <input
                 type="number"
                 value={ethAmount}
-                onChange={(e) => setEthAmount(e.target.value)}
+                onChange={e => setEthAmount(e.target.value)}
                 placeholder="0.0"
                 className="flex-1 bg-transparent text-right text-lg font-medium text-gray-900 outline-none"
               />
@@ -85,26 +94,15 @@ function ConnectWallet() {
           </div>
 
           <div className="w-full flex items-center justify-between">
-            {isConnected ? (
+            {isLogged ? (
               <button
                 onClick={handleConnectWallet}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                Stake
+                质押
               </button>
             ) : (
-              <ConnectButton.Custom>
-                {({ openConnectModal }) => {
-                  return (
-                    <button
-                      onClick={openConnectModal}
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-                    >
-                      连接钱包
-                    </button>
-                  );
-                }}
-              </ConnectButton.Custom>
+              <WalletLoginButton className="w-full py-4" />
             )}
           </div>
           {/* Connect Wallet Button */}
@@ -116,9 +114,7 @@ function ConnectWallet() {
             <h3 className="text-lg font-bold text-gray-900">Total 6.4% APR</h3>
             <span className="text-gray-600">+ Mellow points</span>
           </div>
-          <p className="text-sm text-gray-600">
-            New way to support Lido decentralization.
-          </p>
+          <p className="text-sm text-gray-600">New way to support Lido decentralization.</p>
 
           {/* Protocol Icons */}
           <div className="flex items-center gap-3 mt-4">
@@ -147,16 +143,13 @@ function ConnectWallet() {
               <div className="w-6 h-6 bg-gradient-to-br from-pink-500 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">M</span>
               </div>
-              <span className="text-sm font-semibold text-gray-700">
-                Mellow points
-              </span>
+              <span className="text-sm font-semibold text-gray-700">Mellow points</span>
             </div>
           </div>
 
           <div className="text-xs text-gray-500 mt-3 leading-relaxed">
-            Not financial advice. Info and APR are illustrative, actual rewards
-            may vary. Vaults use carries risk. By proceeding, you'll be
-            redirected to a third-party site.
+            Not financial advice. Info and APR are illustrative, actual rewards may vary. Vaults use carries risk. By
+            proceeding, you'll be redirected to a third-party site.
           </div>
 
           <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 mt-4">
@@ -169,16 +162,12 @@ function ConnectWallet() {
         <div className="space-y-3 pt-2">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">You will receive</span>
-            <span className="text-sm font-semibold text-gray-900">
-              {youWillReceive}
-            </span>
+            <span className="text-sm font-semibold text-gray-900">{youWillReceive}</span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">Exchange rate</span>
-            <span className="text-sm font-semibold text-gray-900">
-              {exchangeRate}
-            </span>
+            <span className="text-sm font-semibold text-gray-900">{exchangeRate}</span>
           </div>
 
           <div className="flex justify-between items-center">
@@ -196,7 +185,7 @@ function ConnectWallet() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default ConnectWallet;
+export default ConnectWallet

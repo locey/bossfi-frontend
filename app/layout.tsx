@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Nunito, PT_Sans } from 'next/font/google'
+import { PassportProvider } from '@/components/Passport'
+import WalletProvider from '@/components/Wallet'
 import './globals.css'
 
 const nunito = Nunito({
@@ -25,7 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>{children}</body>
+      <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>
+        <WalletProvider>
+          <PassportProvider>{children}</PassportProvider>
+        </WalletProvider>
+      </body>
     </html>
   )
 }

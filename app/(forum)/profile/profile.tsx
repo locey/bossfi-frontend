@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useState } from 'react'
 import { Card } from '@/components/ui/card'
@@ -63,7 +64,7 @@ export default function Mine({ user, posts, comments }: { user: any; posts: any;
       {/* tab内容 */}
       {tab === 'posts' ? (
         <div className="flex flex-col gap-4">
-          {posts.map(post => (
+          {posts.map((post: any) => (
             <PostCard
               key={post.id}
               title={post.title}
@@ -77,7 +78,7 @@ export default function Mine({ user, posts, comments }: { user: any; posts: any;
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {comments.map(comment => (
+          {comments.map((comment: any) => (
             <CommentItem key={comment.id} comment={comment} />
           ))}
         </div>

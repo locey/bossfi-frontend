@@ -1,36 +1,26 @@
 import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Heart, MessageCircle } from 'lucide-react'
 import React from 'react'
 import Link from 'next/link'
+import { DtoArticleResponse } from '@/api/generated'
 
-interface PostCardProps {
-  title: string
-  desc: string
-  tag: string
-  date: string
-  likes: number
-  comments: number
-}
-
-const PostCard: React.FC<PostCardProps> = ({ title, desc, tag, date, likes, comments }) => {
+const ArticleCard: React.FC<DtoArticleResponse> = ({ title, content, created_at, like_count, comment_count }) => {
   return (
-    <Link href={`/posts/${title.replace(/\s+/g, '-')}`}>
+    <Link href={`/posts/${title?.replace(/\s+/g, '-')}`}>
       <Card className="p-6 flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-lg">{title}</span>
-          <Badge variant="outline">{tag}</Badge>
         </div>
-        <div className="text-muted-foreground text-sm">{desc}</div>
+        <div className="text-muted-foreground text-sm truncate">{content}</div>
         <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
-          <span>{date}</span>
+          <span>{created_at}</span>
           <span className="flex items-center gap-1">
             <Heart size={14} className="text-red-500" />
-            {likes}
+            {like_count}
           </span>
           <span className="flex items-center gap-1">
             <MessageCircle size={14} />
-            {comments}
+            {comment_count}
           </span>
         </div>
       </Card>
@@ -38,4 +28,4 @@ const PostCard: React.FC<PostCardProps> = ({ title, desc, tag, date, likes, comm
   )
 }
 
-export default PostCard
+export default ArticleCard

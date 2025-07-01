@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import CommentItem from '@/components/Post/CommentItem'
-import PostCard from '@/components/Post/PostCard'
+import CommentItem from '@/components/Article/CommentItem'
+import ArticleCard from '@/components/Article/ArticleCard'
 
 export default function Mine({ user, posts, comments }: { user: any; posts: any; comments: any }) {
   const [tab, setTab] = useState('posts')
@@ -65,7 +65,7 @@ export default function Mine({ user, posts, comments }: { user: any; posts: any;
       {tab === 'posts' ? (
         <div className="flex flex-col gap-4">
           {posts.map((post: any) => (
-            <PostCard
+            <ArticleCard
               key={post.id}
               title={post.title}
               desc={post.content}

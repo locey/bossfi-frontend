@@ -1,5 +1,6 @@
 'use server'
 
+import { apiClient } from '@/api'
 import dynamic from 'next/dynamic'
 
 const Profile = dynamic(() => import('./profile'), {
@@ -79,7 +80,13 @@ const mockComments = [
 ]
 export default async function Page() {
   console.log('Page start')
-  await new Promise(resolve => setTimeout(resolve, 10000))
+  try {
+    const list = await apiClient.articlesGet(1, 10)
+    console.log(list.data)
+  } catch (error) {
+    console.error(error)
+  }
+
   console.log('Page end')
   return <Profile user={mockUser} posts={mockPosts} comments={mockComments} />
 }

@@ -4,7 +4,7 @@ import Navbar from '@/components/navbar'
 import PostComposer from '@/components/post-composer'
 import CategoryGrid from '@/components/category-grid'
 import ThreadCard from '@/components/thread-card'
-import { getArticles } from '@/api/文章/文章'
+import { getArticles } from '@/api/articles/articles'
 import Feather from '@expo/vector-icons/Feather'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 

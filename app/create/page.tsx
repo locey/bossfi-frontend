@@ -11,8 +11,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ImageIcon, Paperclip, Smile } from 'lucide-react'
-import { usePostArticles } from '@/api/文章/文章'
-import { useGetCategories } from '@/api/分类/分类'
+import { usePostArticles } from '@/api/articles/articles'
+import { useGetCategories } from '@/api/categories/categories'
 
 const categories = [
   { value: 'crypto', label: 'Crypto' },
@@ -31,11 +31,11 @@ export default function CreateThreadPage() {
   const [category, setCategory] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // 获取所有分类
+  // 获取所有categories
   const { data: categoriesData } = useGetCategories()
   const categoriesList = categoriesData?.categories || []
 
-  // 发布文章
+  // 发布articles
   const { mutate } = usePostArticles()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,7 +43,7 @@ export default function CreateThreadPage() {
     if (!title.trim() || !content.trim() || !category) return
 
     setIsSubmitting(true)
-    // 分类字符串转 category_id
+    // categories字符串转 category_id
     const selectedCategory = categoriesList.find(cat => cat.name === categories.find(c => c.value === category)?.label)
     const category_id = selectedCategory?.id
 

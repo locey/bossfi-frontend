@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft, Share, Bookmark, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 
-import { getArticlesId } from '@/api/文章/文章'
-import { getComments } from '@/api/评论/评论'
+import { getArticlesId } from '@/api/articles/articles'
+import { getComments } from '@/api/comments/comments'
 
 interface ThreadDetailPageProps {
   params: { id: string }

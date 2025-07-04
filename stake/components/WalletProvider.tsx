@@ -7,14 +7,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { mainnet, sepolia } from 'wagmi/chains';
 
 // const config = getDefaultConfig({
-//   appName: 'My Web3 App',
+//   appName: 'BossFi',
 //   projectId: 'YOUR_PROJECT_ID',
 //   chains: [mainnet, sepolia],
 //   ssr: false,
 // });
 
 const config = getDefaultConfig({
-  appName: 'My Web3 App',
+  appName: 'BossFi',
   projectId: 'YOUR_WALLETCONNECT_PROJECT_ID', // 可前往 https://cloud.walletconnect.com 注册
   chains: [mainnet, sepolia],
   ssr: false,

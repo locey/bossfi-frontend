@@ -1,42 +1,71 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Navbar from "@/components/navbar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ImageIcon, Paperclip, Smile } from "lucide-react"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Navbar from '@/components/navbar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { ImageIcon, Paperclip, Smile } from 'lucide-react'
+import { usePostArticles } from '@/api/文章/文章'
+import { useGetCategories } from '@/api/分类/分类'
 
 const categories = [
-  { value: "crypto", label: "Crypto" },
-  { value: "nfts", label: "NFTs" },
-  { value: "houses", label: "Houses" },
-  { value: "trading", label: "Trading" },
-  { value: "finance", label: "Finance" },
-  { value: "wall-street", label: "Wall Street" },
-  { value: "sport-cars", label: "Sport Cars" },
+  { value: 'crypto', label: 'Crypto' },
+  { value: 'nfts', label: 'NFTs' },
+  { value: 'houses', label: 'Houses' },
+  { value: 'trading', label: 'Trading' },
+  { value: 'finance', label: 'Finance' },
+  { value: 'wall-street', label: 'Wall Street' },
+  { value: 'sport-cars', label: 'Sport Cars' },
 ]
 
 export default function CreateThreadPage() {
   const router = useRouter()
-  const [title, setTitle] = useState("")
-  const [content, setContent] = useState("")
-  const [category, setCategory] = useState("")
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [category, setCategory] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 获取所有分类
+  const { data: categoriesData } = useGetCategories()
+  const categoriesList = categoriesData?.categories || []
+
+  // 发布文章
+  const { mutate } = usePostArticles()
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim() || !content.trim() || !category) return
 
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsSubmitting(false)
-    router.push("/")
+    // 分类字符串转 category_id
+    const selectedCategory = categoriesList.find(cat => cat.name === categories.find(c => c.value === category)?.label)
+    const category_id = selectedCategory?.id
+
+    mutate(
+      {
+        data: {
+          title,
+          content,
+          category_id,
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsSubmitting(false)
+          router.push('/')
+        },
+        onError: () => {
+          setIsSubmitting(false)
+          // 可以加错误提示
+        },
+      },
+    )
   }
 
   return (
@@ -60,7 +89,7 @@ export default function CreateThreadPage() {
                 <Input
                   placeholder="Thread title..."
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
                   className="text-lg font-semibold border-none focus-visible:ring-0 p-0 placeholder:text-gray-400"
                   required
                 />
@@ -70,7 +99,7 @@ export default function CreateThreadPage() {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
+                    {categories.map(cat => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}
                       </SelectItem>
@@ -81,7 +110,7 @@ export default function CreateThreadPage() {
                 <Textarea
                   placeholder="What's on your mind?"
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={e => setContent(e.target.value)}
                   className="min-h-[200px] border-none resize-none focus-visible:ring-0 p-0 placeholder:text-gray-400"
                   required
                 />
@@ -108,7 +137,7 @@ export default function CreateThreadPage() {
                       disabled={!title.trim() || !content.trim() || !category || isSubmitting}
                       className="bg-black text-white hover:bg-gray-800 rounded-full px-6"
                     >
-                      {isSubmitting ? "Publishing..." : "Publish"}
+                      {isSubmitting ? 'Publishing...' : 'Publish'}
                     </Button>
                   </div>
                 </div>

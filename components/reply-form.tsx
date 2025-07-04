@@ -1,30 +1,27 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { ImageIcon, Paperclip, Smile } from "lucide-react"
+import { useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { ImageIcon, Paperclip, Smile } from 'lucide-react'
+import { usePostComments } from '@/api/评论/评论'
+import { useRouter } from 'next/navigation'
 
 interface ReplyFormProps {
   threadId: string
   parentId?: string
-  onSubmit: () => void
   onCancel?: () => void
   placeholder?: string
 }
 
-export default function ReplyForm({
-  threadId,
-  parentId,
-  onSubmit,
-  onCancel,
-  placeholder = "Write a reply...",
-}: ReplyFormProps) {
-  const [content, setContent] = useState("")
+export default function ReplyForm({ threadId, parentId, onCancel, placeholder = 'Write a reply...' }: ReplyFormProps) {
+  const [content, setContent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { mutate: postComments } = usePostComments()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,23 +29,26 @@ export default function ReplyForm({
 
     setIsSubmitting(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Here you would make the actual API call to submit the reply
-    console.log({
-      threadId,
-      parentId,
-      content: content.trim(),
-    })
-
-    setContent("")
-    setIsSubmitting(false)
-    onSubmit()
+    try {
+      await postComments({
+        data: {
+          article_id: Number(threadId),
+          content: content.trim(),
+          parent_id: parentId ? Number(parentId) : undefined,
+        },
+      })
+      router.refresh()
+      setContent('')
+    } catch (error) {
+      // 可选：处理错误提示
+      console.error('Failed to post comment:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleCancel = () => {
-    setContent("")
+    setContent('')
     if (onCancel) {
       onCancel()
     }
@@ -66,7 +66,7 @@ export default function ReplyForm({
           <Textarea
             placeholder={placeholder}
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={e => setContent(e.target.value)}
             className="min-h-[80px] border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
             disabled={isSubmitting}
           />
@@ -121,7 +121,7 @@ export default function ReplyForm({
                 disabled={!content.trim() || isSubmitting}
                 className="bg-black text-white hover:bg-gray-800 rounded-full px-4"
               >
-                {isSubmitting ? "Posting..." : "Reply"}
+                {isSubmitting ? 'Posting...' : 'Reply'}
               </Button>
             </div>
           </div>

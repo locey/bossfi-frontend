@@ -9,6 +9,7 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   config => {
+    if (global.localStorage == null) return config
     config.headers['Authorization'] = `Bearer ${localStorage.getItem('Token')}`
     return config
   },
@@ -31,7 +32,7 @@ instance.interceptors.response.use(
     // if (data.code !== 0) {
     //   return Promise.reject(data);
     // }
-    return data
+    return response
   },
   error => {
     return Promise.reject(error)

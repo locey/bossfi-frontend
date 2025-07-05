@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "openapi-generator-cli generate -i http://117.72.201.234/swagger/doc.json -g typescript-axios -o api/generated --additional-properties=supportsES6=true"
+    "codegen": "orval"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",

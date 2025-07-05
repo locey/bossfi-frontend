@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageIcon, Paperclip, Smile } from 'lucide-react'
-import { usePostComments } from '@/api/评论/评论'
+import { usePostComments } from '@/api/comments/comments'
 import { useRouter } from 'next/navigation'
 
 interface ReplyFormProps {

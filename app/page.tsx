@@ -5,18 +5,6 @@ import PostComposer from '@/components/post-composer'
 import CategoryGrid from '@/components/category-grid'
 import ThreadCard from '@/components/thread-card'
 import { getArticles } from '@/api/articles/articles'
-import Feather from '@expo/vector-icons/Feather'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-
-function MyComponent() {
-  return (
-    <div>
-      <Feather name="home" size={24} color="black" />
-      <MaterialIcons name="favorite" size={24} color="red" />
-    </div>
-  )
-}
-
 export default async function HomePage() {
   const data = await getArticles({
     page: 1,
@@ -25,7 +13,6 @@ export default async function HomePage() {
   console.log(data.articles)
   return (
     <div className="min-h-screen bg-gray-50">
-      <MyComponent />
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-6 py-8">

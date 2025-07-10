@@ -9,7 +9,7 @@ import Pagination from '@/components/pagination'
 
 const pageSize = 5
 export default async function HomePage({ searchParams }: { searchParams: { category?: string; page: string } }) {
-  const category_id = JSON.parse(searchParams?.category ?? '') ? Number(searchParams.category) : undefined
+  const category_id = JSON.parse(searchParams?.category ?? 'null') ? Number(searchParams.category) : undefined
   const page = searchParams?.page ? Number(searchParams.page) : 1
   const data = await getArticles({
     page,

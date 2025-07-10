@@ -8,7 +8,7 @@ import { mainnet, sepolia } from 'wagmi/chains'
 
 const config = getDefaultConfig({
   appName: 'BossFi',
-  projectId: 'YOUR_WALLETCONNECT_PROJECT_ID', // 可前往 https://cloud.walletconnect.com 注册
+  projectId: '2a033c6bb6481e79d82569659d307e75', // 可前往 https://cloud.walletconnect.com 注册
   chains: [mainnet, sepolia],
   ssr: false,
 })

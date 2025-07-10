@@ -5,10 +5,16 @@ import PostComposer from '@/components/post-composer'
 import CategoryGrid from '@/components/category-grid'
 import ThreadCard from '@/components/thread-card'
 import { getArticles } from '@/api/articles/articles'
-export default async function HomePage() {
+import Pagination from '@/components/pagination'
+
+const pageSize = 5
+export default async function HomePage({ searchParams }: { searchParams: { category?: string; page: string } }) {
+  const category_id = JSON.parse(searchParams?.category ?? '') ? Number(searchParams.category) : undefined
+  const page = searchParams?.page ? Number(searchParams.page) : 1
   const data = await getArticles({
-    page: 1,
-    page_size: 10,
+    page,
+    page_size: pageSize,
+    category_id,
   })
   console.log(data.articles)
   return (
@@ -44,6 +50,7 @@ export default async function HomePage() {
             ))}
           </div>
         </div>
+        <Pagination total={data.total ?? 0} page={page} pageSize={pageSize} />
       </div>
     </div>
   )

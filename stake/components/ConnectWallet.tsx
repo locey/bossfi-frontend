@@ -1,15 +1,11 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Wallet, Info, Plus, ArrowRight } from 'lucide-react'
-import { useAccount, useBalance, useSignMessage } from 'wagmi'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useAccount, useBalance } from 'wagmi'
 import { formatUnits } from 'viem'
 import { formatAddress } from '@/utils'
 import { useStake } from '@/hooks/useStake'
-import to from '@/utils/await-to'
-import api from '@/apis/auth'
-import { Button } from '@/components/ui/button'
 import { usePassport, WalletLoginButton } from '@/components/Passport'
 
 function ConnectWallet() {

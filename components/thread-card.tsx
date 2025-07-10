@@ -8,57 +8,23 @@ import { Heart, MessageCircle, CornerUpLeft } from 'lucide-react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { DtoArticleResponse } from '@/api/model/dtoArticleResponse'
-
+import * as jdenticon from 'jdenticon'
 interface ThreadCardProps {
   thread: DtoArticleResponse
   isReply?: boolean
   showReplyButton?: boolean
   isClickable?: boolean
 }
-/**
- * 根据加密货币钱包地址生成马赛克图案
- * @param {string} walletAddress - 钱包地址 (如 "0x47D441F5c186b4387efad33A465FdE1b7C7Df858")
- * @param {number} [size=12] - 马赛克网格大小 (N x N)
- * @param {number} [pixelSize=15] - 每个马赛克像素的大小(像素)
- * @returns {HTMLCanvasElement} - 返回包含马赛克图案的canvas元素
- */
-function generateMosaicFromWallet(walletAddress: string, size = 12, pixelSize = 15) {
-  // 3. 创建Canvas
+
+const addressToAvatar = (address: string) => {
   const canvas = document.createElement('canvas')
-  const canvasSize = size * pixelSize
-  canvas.width = canvasSize
-  canvas.height = canvasSize
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return null
-
-  // 4. 生成马赛克（使用钱包地址的16进制字符控制颜色）
-  const hexChars = walletAddress.replace('0x', '').split('')
-  let hexIndex = 0
-
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      // 用16进制字符决定是否填充（偶数字符则填充）
-      const shouldFill = parseInt(hexChars[hexIndex % hexChars.length], 16) % 2 === 0
-      hexIndex++
-
-      if (shouldFill) {
-        // 用地址中的相邻字符生成RGB颜色
-        const r = parseInt(hexChars[hexIndex % hexChars.length], 16) * 16
-        hexIndex++
-        const g = parseInt(hexChars[hexIndex % hexChars.length], 16) * 16
-        hexIndex++
-        const b = parseInt(hexChars[hexIndex % hexChars.length], 16) * 16
-        hexIndex++
-
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
-        ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize)
-      }
-    }
-  }
-
+  canvas.width = 20
+  canvas.height = 20
+  jdenticon.updateCanvas(canvas, address, {
+    padding: 0,
+  })
   return canvas.toDataURL()
 }
-
 export default function ThreadCard({
   thread,
   isReply = false,
@@ -80,9 +46,7 @@ export default function ThreadCard({
       <div className="flex items-start justify-between">
         <div className="flex space-x-3 flex-1">
           <Avatar className="h-10 w-10">
-            <AvatarImage
-              src={generateMosaicFromWallet(thread.user?.wallet_address || '') || '/placeholder.svg?height=40&width=40'}
-            />
+            <AvatarImage src={addressToAvatar(thread.user?.wallet_address || '')} />
             <AvatarFallback>{thread.user?.wallet_address || '?'}</AvatarFallback>
           </Avatar>
           <div className="flex-1">

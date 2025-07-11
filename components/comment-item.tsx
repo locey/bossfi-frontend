@@ -15,7 +15,6 @@ interface CommentItemProps {
 }
 
 export default function CommentItem({ comment, threadId, depth = 0 }: CommentItemProps) {
-  console.log('comment', comment)
   // 没有 isLiked 字段，默认 false
   const [isLiked, setIsLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(comment.like_count || 0)

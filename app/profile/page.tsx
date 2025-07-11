@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Navbar from '@/components/navbar'
-import ThreadCard from '@/components/thread-card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Settings, Calendar, MapPin } from 'lucide-react'
@@ -12,7 +11,6 @@ import { formatAddress } from '@/utils'
 import dayjs from 'dayjs'
 import { useGetUserComments } from '@/api/comments/comments'
 import { useRouter } from 'next/navigation'
-import PostCard from '@/components/post-card'
 import CommentItem from '@/components/comment-item'
 
 const userProfile = {
@@ -141,9 +139,9 @@ export default function ProfilePage() {
           </TabsList>
 
           <TabsContent value="threads" className="space-y-4">
-            {myThreads.map(thread => (
-              <ThreadCard key={thread.id} thread={thread} />
-            ))}
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+              <p className="text-gray-500">No threads yet</p>
+            </div>
           </TabsContent>
 
           <TabsContent value="replies" className="space-y-4">
@@ -153,7 +151,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               comments?.comments?.map(comment => (
-                <CommentItem key={comment.id} comment={comment} threadId={comment.article_id} />
+                <CommentItem key={comment.id} comment={comment} threadId={comment.article_id!} />
               ))
             )}
           </TabsContent>

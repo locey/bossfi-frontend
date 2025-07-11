@@ -1,5 +1,5 @@
 'use client'
-
+import '@rainbow-me/rainbowkit/styles.css'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -8,11 +8,13 @@ import { useState } from 'react'
 import { usePassport, WalletLoginButton } from './Passport'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const { isLogged } = usePassport()
   const pathname = usePathname()
+  const router = useRouter()
 
   return (
     <nav className="w-full bg-white border-b border-gray-200 px-6 py-4">
@@ -27,7 +29,15 @@ export default function Navbar() {
             <Input
               placeholder="Chats, messages and more"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={e => {
+                const v = e.target.value
+                setSearchQuery(v)
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  router.push(`/?q=${searchQuery}`)
+                }
+              }}
               className="pl-12 bg-gray-50 border-gray-200 rounded-full h-10 text-sm"
             />
           </div>

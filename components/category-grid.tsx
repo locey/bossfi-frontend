@@ -3,7 +3,7 @@
 import { useGetCategories } from '@/api/categories/categories'
 import { Home, Palette, TrendingUp, DollarSign, Building, Car, Bitcoin, Layers } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-const IconMap = {
+export const cagetoryIconMap = {
   All: <Layers className="h-5 w-5 text-white" />, // 新增
   Crypto: <Bitcoin className="h-5 w-5 text-white" />,
   NFTs: <Palette className="h-5 w-5 text-white" />,
@@ -35,7 +35,7 @@ export default function CategoryGrid() {
       <h2 className="text-xl font-semibold text-black mb-6">Categories</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {displayCategories.map(category => {
-          const IconComponent = IconMap[category.name as keyof typeof IconMap]
+          const IconComponent = cagetoryIconMap[category.name as keyof typeof cagetoryIconMap]
           if (!IconComponent) return null
           // 修改 active 判断逻辑
           const isActive = category_id === category.id?.toString() || (!category_id && category.id === 'all')

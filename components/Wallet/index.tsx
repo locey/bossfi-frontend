@@ -6,9 +6,16 @@ import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { mainnet, sepolia } from 'wagmi/chains'
 
+if (process.env.NEXT_PUBLIC_WAGAMI_APP_NAME == null) {
+  throw new Error('NEXT_PUBLIC_WAGAMI_APP_NAME is not set')
+}
+if (process.env.NEXT_PUBLIC_WAGAMI_APP_PROJECT_ID == null) {
+  throw new Error('NEXT_PUBLIC_WAGAMI_APP_PROJECT_ID is not set')
+}
+
 const config = getDefaultConfig({
-  appName: 'BossFi',
-  projectId: '2a033c6bb6481e79d82569659d307e75', // 可前往 https://cloud.walletconnect.com 注册
+  appName: process.env.NEXT_PUBLIC_WAGAMI_APP_NAME,
+  projectId: process.env.NEXT_PUBLIC_WAGAMI_APP_PROJECT_ID, // 可前往 https://cloud.walletconnect.com 注册
   chains: [mainnet, sepolia],
   ssr: false,
 })

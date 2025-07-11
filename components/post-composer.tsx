@@ -1,25 +1,21 @@
 'use client'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { usePostArticles } from '@/api/articles/articles'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageIcon, Paperclip, Smile } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { getGetCategoriesQueryKey, useGetCategories } from '@/api/categories/categories'
+import { getGetCategoriesQueryKey } from '@/api/categories/categories'
 import { queryClient } from '@/app/queryclient'
 import { useAccount } from 'wagmi'
 import Avatar from './avatar'
+import CategorySelector from './category-selector'
 
 export default function PostComposer() {
   const { address } = useAccount()
-  const { data: categoriesData } = useGetCategories({
-    page_size: 20,
-    page: 1,
-  })
-  const categoriesList = categoriesData?.categories || []
-  const [content, setContent] = useState('')
+
   const [categoryId, setCategoryId] = useState(1)
+  const [content, setContent] = useState('')
   // 发布articles
   const router = useRouter()
   const { mutate } = usePostArticles({
@@ -53,32 +49,10 @@ export default function PostComposer() {
               <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 p-2">
                 <Smile className="h-5 w-5" />
               </Button>
-              {/* 分类选择器移动到底部工具栏 */}
-              <div className="ml-4 w-44">
-                <Select
-                  value={categoryId.toString()}
-                  onValueChange={v => {
-                    const id = Number(v)
-                    if (isNaN(id)) return
-                    setCategoryId(id)
-                  }}
-                  required
-                >
-                  <SelectTrigger className="w-full border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition text-base font-medium h-10">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categoriesList.map(
-                      cat =>
-                        cat.id && (
-                          <SelectItem key={cat.id} value={cat.id.toString()}>
-                            {cat.name}
-                          </SelectItem>
-                        ),
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+
+              {/* Category Selector */}
+              <div className="mx-2 h-4 w-px bg-gray-200"></div>
+              <CategorySelector selectedCategory={categoryId} onCategoryChange={setCategoryId} className="ml-1" />
             </div>
             <Button
               className="bg-gray-200 text-gray-700 font-semibold rounded-full px-6 py-2 ml-4 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '@/components/navbar'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -10,8 +10,8 @@ import { useAccount } from 'wagmi'
 import { formatAddress } from '@/utils'
 import dayjs from 'dayjs'
 import { useGetUserComments } from '@/api/comments/comments'
-import { useRouter } from 'next/navigation'
 import CommentItem from '@/components/comment-item'
+import { useRouter } from 'next/navigation'
 
 const userProfile = {
   name: 'John Doe',
@@ -56,6 +56,11 @@ const myThreads = [
   },
 ]
 
+type UserInfoType = {
+  created_at?: string
+  [key: string]: unknown
+}
+
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('threads')
   const router = useRouter()
@@ -64,11 +69,17 @@ export default function ProfilePage() {
     page: 1,
     page_size: 10,
   })
+  const [UserInfo, setUserInfo] = useState<UserInfoType>({})
+
+  useEffect(() => {
+    const info = JSON.parse(localStorage.getItem('UserInfo') ?? '{}')
+    setUserInfo(info)
+  }, [])
+
   if (!address) {
     router.replace('/')
-    return
+    // throw new Error('no address')
   }
-  const UserInfo = JSON.parse(localStorage.getItem('UserInfo') ?? '{}')
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,7 +93,7 @@ export default function ProfilePage() {
             <div className="flex-1">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-black">{formatAddress(address)}</h1>
+                  <h1 className="text-2xl font-bold text-black">{formatAddress(address ?? '')}</h1>
                   <p className="text-gray-500">{address}</p>
                 </div>
                 <Button variant="ghost" size="sm" className="text-gray-500">
@@ -99,7 +110,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
-                  <span>{dayjs(UserInfo.created_at).format('MM/DD/YYYY hh:mm:ss A')}</span>
+                  <span>{UserInfo.created_at ? dayjs(UserInfo.created_at).format('MM/DD/YYYY hh:mm:ss A') : ''}</span>
                 </div>
               </div>
 

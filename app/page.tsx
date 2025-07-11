@@ -8,15 +8,20 @@ import { getArticles } from '@/api/articles/articles'
 import Pagination from '@/components/pagination'
 
 const pageSize = 5
-export default async function HomePage({ searchParams }: { searchParams: { category?: string; page: string } }) {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: { category?: string; page?: string; q?: string }
+}) {
   const category_id = JSON.parse(searchParams?.category ?? 'null') ? Number(searchParams.category) : undefined
   const page = searchParams?.page ? Number(searchParams.page) : 1
+  const q = searchParams?.q
   const data = await getArticles({
     page,
     page_size: pageSize,
     category_id,
+    keyword: q,
   })
-  console.log(data.articles)
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />

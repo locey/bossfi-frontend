@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import clsx from 'clsx'
 import { cn } from '@/lib/utils'
 
 function WalletLoginButton(props: { children?: React.ReactNode; className?: string }) {
@@ -19,7 +18,7 @@ function WalletLoginButton(props: { children?: React.ReactNode; className?: stri
               className,
             )}
           >
-            {children || '连接钱包'}
+            {children || 'Connect Wallet'}
           </button>
         )
       }}

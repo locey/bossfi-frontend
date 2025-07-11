@@ -1,22 +1,15 @@
 'use client'
 
+import Navbar from '@/components/navbar'
 import ConnectWallet from './components/ConnectWallet'
 import FAQ from './components/FAQ'
 import Statistics from './components/Statistics'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { usePassport, WalletLoginButton } from '@/components/Passport'
 import '@rainbow-me/rainbowkit/styles.css'
 
 function StakePage() {
-  const { isLogged } = usePassport()
-
   return (
     <div className="bg-[##f2f4f6]">
-      <div className="w-full flex justify-between items-center bg-white p-4 shadow-md">
-        <h1 className="text-xl font-bold">BoosFi</h1>
-        {isLogged ? <ConnectButton /> : <WalletLoginButton className="" />}
-      </div>
-
+      <Navbar />
       <main className="w-[560px] mx-auto py-2 mt-4">
         <div className="flex flex-col items-center mb-4">
           <h1 className="text-2xl font-bold mb-1">Stake Ether</h1>

@@ -3,25 +3,27 @@
 import type React from 'react'
 
 import { useState } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageIcon, Paperclip, Smile } from 'lucide-react'
 import { usePostComments } from '@/api/comments/comments'
 import { useRouter } from 'next/navigation'
+import { useAccount } from 'wagmi'
+import Avatar from './avatar'
 
 interface ReplyFormProps {
-  threadId: string
-  parentId?: string
+  threadId: number
+  commentId?: number
   onCancel?: () => void
   placeholder?: string
 }
 
-export default function ReplyForm({ threadId, parentId, onCancel, placeholder = 'Write a reply...' }: ReplyFormProps) {
+export default function ReplyForm({ threadId, commentId, onCancel, placeholder = 'Write a reply...' }: ReplyFormProps) {
   const [content, setContent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { mutate: postComments } = usePostComments()
   const router = useRouter()
+  const { address } = useAccount()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,9 +34,9 @@ export default function ReplyForm({ threadId, parentId, onCancel, placeholder = 
     try {
       await postComments({
         data: {
-          article_id: Number(threadId),
+          article_id: threadId,
           content: content.trim(),
-          parent_id: parentId ? Number(parentId) : undefined,
+          parent_id: commentId ? commentId : undefined,
         },
       })
       router.refresh()
@@ -57,10 +59,7 @@ export default function ReplyForm({ threadId, parentId, onCancel, placeholder = 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex space-x-3">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src="/placeholder.svg?height=40&width=40" />
-          <AvatarFallback>U</AvatarFallback>
-        </Avatar>
+        <Avatar address={address} />
 
         <div className="flex-1">
           <Textarea

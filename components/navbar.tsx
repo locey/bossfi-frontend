@@ -1,14 +1,18 @@
-"use client"
+'use client'
 
-import { Search } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useState } from "react"
+import { Search } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useState } from 'react'
+import { usePassport, WalletLoginButton } from './Passport'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState('')
+  const { isLogged } = usePassport()
+  const pathname = usePathname()
 
   return (
     <nav className="w-full bg-white border-b border-gray-200 px-6 py-4">
@@ -23,22 +27,24 @@ export default function Navbar() {
             <Input
               placeholder="Chats, messages and more"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="pl-12 bg-gray-50 border-gray-200 rounded-full h-10 text-sm"
             />
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
-          <Link href="/create">
-            <Button className="bg-black text-white hover:bg-gray-800 rounded-full px-6 h-10">New thread</Button>
-          </Link>
-          <Link href="/profile">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src="/placeholder.svg?height=40&width=40" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-          </Link>
+          {pathname !== '/create' && (
+            <Link href="/create">
+              <Button className="bg-black text-white hover:bg-gray-800 rounded-full px-6 h-10">New thread</Button>
+            </Link>
+          )}
+          {pathname !== '/stake' && (
+            <Link href="/stake">
+              <Button className="bg-blue-600 text-white hover:bg-blue-700 rounded-full px-6 h-10">Stake</Button>
+            </Link>
+          )}
+          {isLogged ? <ConnectButton /> : <WalletLoginButton />}
         </div>
       </div>
     </nav>

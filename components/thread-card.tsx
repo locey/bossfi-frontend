@@ -2,13 +2,13 @@
 
 import type React from 'react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Heart, MessageCircle, CornerUpLeft } from 'lucide-react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { DtoArticleResponse } from '@/api/model/dtoArticleResponse'
-import * as jdenticon from 'jdenticon'
+import Avatar from './avatar'
+import { usePostArticlesIdLike } from '@/api/articles/articles'
 interface ThreadCardProps {
   thread: DtoArticleResponse
   isReply?: boolean
@@ -16,15 +16,6 @@ interface ThreadCardProps {
   isClickable?: boolean
 }
 
-const addressToAvatar = (address: string) => {
-  const canvas = document.createElement('canvas')
-  canvas.width = 20
-  canvas.height = 20
-  jdenticon.updateCanvas(canvas, address, {
-    padding: 0,
-  })
-  return canvas.toDataURL()
-}
 export default function ThreadCard({
   thread,
   isReply = false,
@@ -33,11 +24,20 @@ export default function ThreadCard({
 }: ThreadCardProps) {
   const [isLiked, setIsLiked] = useState(false) // DtoArticleResponse does not have isLiked
   const [likesCount, setLikesCount] = useState(thread.like_count ?? 0)
+  const { mutate: likeArticle } = usePostArticlesIdLike({
+    mutation: {
+      onSuccess: () => {},
+    },
+  })
 
-  const handleLike = (e: React.MouseEvent) => {
+  const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    if (thread.id == null) return
     setIsLiked(!isLiked)
+    await likeArticle({
+      id: thread.id,
+    })
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1)
   }
 
@@ -45,10 +45,7 @@ export default function ThreadCard({
     <div className={`bg-white rounded-2xl border border-gray-200 p-6 ${isReply ? 'ml-12 mt-4' : ''}`}>
       <div className="flex items-start justify-between">
         <div className="flex space-x-3 flex-1">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={addressToAvatar(thread.user?.wallet_address || '')} />
-            <AvatarFallback>{thread.user?.wallet_address || '?'}</AvatarFallback>
-          </Avatar>
+          <Avatar address={thread.user?.wallet_address} />
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
               <span className="font-semibold text-black">

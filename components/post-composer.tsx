@@ -1,7 +1,6 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { usePostArticles } from '@/api/articles/articles'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageIcon, Paperclip, Smile } from 'lucide-react'
@@ -9,8 +8,11 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { getGetCategoriesQueryKey, useGetCategories } from '@/api/categories/categories'
 import { queryClient } from '@/app/queryclient'
+import { useAccount } from 'wagmi'
+import Avatar from './avatar'
 
 export default function PostComposer() {
+  const { address } = useAccount()
   const { data: categoriesData } = useGetCategories({
     page_size: 20,
     page: 1,
@@ -32,10 +34,7 @@ export default function PostComposer() {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
       <div className="flex space-x-4">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src="/placeholder.svg?height=40&width=40" />
-          <AvatarFallback>U</AvatarFallback>
-        </Avatar>
+        <Avatar address={address} />
         <div className="flex-1">
           <Textarea
             placeholder="Tell everyone what are you working on..."

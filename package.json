@@ -24,6 +24,7 @@
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
     "feather-icons": "^4.29.2",
     "identicon": "^3.1.1",
     "jdenticon": "^3.3.0",

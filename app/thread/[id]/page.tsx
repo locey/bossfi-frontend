@@ -65,7 +65,7 @@ export default async function ThreadDetailPage({ params }: ThreadDetailPageProps
         </div>
 
         {/* Comments section */}
-        <CommentSection comments={commentsRes.comments ?? []} threadId={String(article.id)} />
+        {article.id && <CommentSection comments={commentsRes.comments ?? []} threadId={article.id} />}
       </div>
     </div>
   )

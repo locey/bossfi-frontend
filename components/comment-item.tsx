@@ -1,19 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Heart, MessageCircle, CornerUpLeft, MoreHorizontal } from 'lucide-react'
 import ReplyForm from './reply-form'
 import type { DtoCommentResponse } from '@/api/model/dtoCommentResponse'
+import Avatar from './avatar'
+import { formatAddress } from '@/utils'
 
 interface CommentItemProps {
   comment: DtoCommentResponse
-  threadId: string
+  threadId: number
   depth?: number
 }
 
 export default function CommentItem({ comment, threadId, depth = 0 }: CommentItemProps) {
+  console.log('comment', comment)
   // 没有 isLiked 字段，默认 false
   const [isLiked, setIsLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(comment.like_count || 0)
@@ -29,7 +31,7 @@ export default function CommentItem({ comment, threadId, depth = 0 }: CommentIte
     setShowReplyForm(!showReplyForm)
   }
 
-  const maxDepth = 3
+  const maxDepth = 1
   const isMaxDepth = depth >= maxDepth
 
   return (
@@ -37,14 +39,13 @@ export default function CommentItem({ comment, threadId, depth = 0 }: CommentIte
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3 flex-1">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={comment.user?.avatar || '/placeholder.svg?height=40&width=40'} />
-              <AvatarFallback>{comment.user?.username ? comment.user.username[0] : 'U'}</AvatarFallback>
-            </Avatar>
+            <Avatar address={comment.user?.wallet_address} />
 
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-2">
-                <span className="font-semibold text-black">{comment.user?.username || 'Unknown'}</span>
+                <span className="font-semibold text-black">
+                  {formatAddress(comment.user?.wallet_address ?? 'unknown')}
+                </span>
                 <span className="text-sm text-gray-500">
                   {comment.created_at ? new Date(comment.created_at).toLocaleString() : ''}
                 </span>
@@ -94,7 +95,7 @@ export default function CommentItem({ comment, threadId, depth = 0 }: CommentIte
           <div className="mt-4 pt-4 border-t border-gray-100">
             <ReplyForm
               threadId={threadId}
-              parentId={comment.id?.toString()}
+              commentId={comment.id}
               onCancel={() => setShowReplyForm(false)}
               placeholder={`Reply to ${comment.user?.username || 'Unknown'}...`}
             />

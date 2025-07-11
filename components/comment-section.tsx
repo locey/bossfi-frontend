@@ -7,7 +7,7 @@ import ReplyForm from './reply-form'
 
 interface CommentSectionProps {
   comments: DtoCommentResponse[]
-  threadId: string
+  threadId: number
 }
 
 export default function CommentSection({ comments, threadId }: CommentSectionProps) {

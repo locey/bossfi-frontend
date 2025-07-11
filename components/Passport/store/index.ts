@@ -14,7 +14,7 @@ export default function useStore() {
   const { isConnected } = useAccount()
   const { signMessageAsync } = useSignMessage()
 
-  const login = useMemoizedFn((address: string, token?: string) => {
+  const login = useMemoizedFn((address: string, token?: string | null) => {
     const onLogin = async () => {
       const nonce = await postAuthNonce({ wallet_address: address })
       const sig = await signMessageAsync({ message: nonce?.message || '' })

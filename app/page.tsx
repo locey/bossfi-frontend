@@ -7,7 +7,7 @@ import ThreadCard from '@/components/thread-card'
 import { getArticles } from '@/api/articles/articles'
 import Pagination from '@/components/pagination'
 
-const pageSize = 5
+const pageSize = 20
 export default async function HomePage({
   searchParams,
 }: {

@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import ReactQueryProvider from './queryclient'
-import { PassportProvider } from '@/components/Passport'
-import WalletProvider from '@/components/Wallet'
+import ClientProviders from '@/components/ClientProviders'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -17,9 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         <ReactQueryProvider>
-          <WalletProvider>
-            <PassportProvider>{children}</PassportProvider>
-          </WalletProvider>
+          <ClientProviders>{children}</ClientProviders>
         </ReactQueryProvider>
       </body>
     </html>

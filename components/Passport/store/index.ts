@@ -4,17 +4,12 @@ import { useAccount, useSignMessage } from 'wagmi'
 import { useMemoizedFn } from 'ahooks'
 export default function useStore() {
   const [isLogged, setIsLogged] = useState(false)
-  useEffect(() => {
-    const token = localStorage.getItem('Token')
-    if (token != null) {
-      setIsLogged(true)
-    }
-  }, [])
 
-  const { isConnected } = useAccount()
+  const { address } = useAccount()
   const { signMessageAsync } = useSignMessage()
 
-  const login = useMemoizedFn((address: string, token?: string | null) => {
+  const login = useMemoizedFn((param: { address: string; token?: string | null }) => {
+    const { address, token } = param
     const onLogin = async () => {
       const nonce = await postAuthNonce({ wallet_address: address })
       const sig = await signMessageAsync({ message: nonce?.message || '' })
@@ -38,16 +33,28 @@ export default function useStore() {
       localStorage.setItem('UserInfo', JSON.stringify(response.user))
     }
 
-    if (!token && isConnected) {
+    if (!token && address) {
       onLogin()
-    } else if (token && isConnected) {
+    } else if (token && address) {
       setIsLogged(true)
-    } else if (!isConnected) {
+    } else {
       setIsLogged(false)
       localStorage.removeItem('Token')
       localStorage.removeItem('UserInfo')
     }
   })
+  useEffect(() => {
+    const token = localStorage.getItem('Token')
+    const isLogged = token != null
+    setIsLogged(isLogged)
+    if (!address) return
+    if (isLogged) return
+    if (token != null) return
+    login({
+      address: address,
+      token,
+    })
+  }, [address])
 
-  return { isLogged, login }
+  return { isLogged }
 }

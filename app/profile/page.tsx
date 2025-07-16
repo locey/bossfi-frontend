@@ -75,11 +75,12 @@ export default function ProfilePage() {
     const info = JSON.parse(localStorage.getItem('UserInfo') ?? '{}')
     setUserInfo(info)
   }, [])
-
-  if (!address) {
-    router.replace('/')
-    // throw new Error('no address')
-  }
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!address) {
+      router.replace('/')
+    }
+  }, [address])
 
   return (
     <div className="min-h-screen bg-gray-50">

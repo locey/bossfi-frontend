@@ -17,7 +17,7 @@ const config = getDefaultConfig({
   appName: process.env.NEXT_PUBLIC_WAGAMI_APP_NAME,
   projectId: process.env.NEXT_PUBLIC_WAGAMI_APP_PROJECT_ID, // 可前往 https://cloud.walletconnect.com 注册
   chains: [mainnet, sepolia],
-  ssr: false,
+  ssr: true,
 })
 
 const queryClient = new QueryClient()

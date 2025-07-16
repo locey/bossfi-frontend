@@ -3,7 +3,6 @@
 import React from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { cn } from '@/lib/utils'
-import { usePassport } from '..'
 
 function WalletLoginButton(props: { children?: React.ReactNode; className?: string }) {
   const { children, className } = props

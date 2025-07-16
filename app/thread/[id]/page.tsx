@@ -11,12 +11,12 @@ import { getArticlesId } from '@/api/articles/articles'
 import { getComments } from '@/api/comments/comments'
 
 interface ThreadDetailPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function ThreadDetailPage({ params }: ThreadDetailPageProps) {
   // id 需转为 number
-  const id = Number(params.id)
+  const id = Number((await params).id)
   const article = await getArticlesId(id)
   const commentsRes = await getComments({ article_id: id, page: 1, page_size: 10 })
 
